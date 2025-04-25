@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="76x76" href="../../../../assets/symbol/Bitmap/Symbol-Primary.png" />
+    <link rel="icon" type="image/png" href="../../../../assets/symbol/Bitmap/Symbol-Primary.png" />
+    <title>Premium Subscription</title>
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"
+        crossorigin="anonymous"></script>
+
+    <!-- Main Styling -->
+    <link href="../../styles/soft-ui-dashboard-tailwind.css?v=1.0.5" rel="stylesheet" />
+
+    <!-- Remove direct CDN of Tailwind and use the minified version instead -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- Boxicons -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Supabase JS - Use the reliable CDN without integrity check -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
+
+    <!-- Razorpay Integration -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Simple script to ensure Supabase is available globally -->
+    <script>
+        // Make supabase globally available
+        if (typeof window.supabase === 'undefined' && typeof supabase !== 'undefined') {
+            window.supabase = supabase;
+            console.log('Supabase made globally available');
+        }
+    </script>
+
+    <script>
+        // Authentication check
+        document.addEventListener('DOMContentLoaded', async function () {
+            console.log("Payment page loaded, checking auth...");
+
+            // Check if Supabase is available
+            if (typeof window.supabase === 'undefined' && typeof supabase === 'undefined') {
+                console.error('Supabase library not available');
+                alert('Authentication service not available. Please refresh the page or try again later.');
+                return;
+            }
+
+            // Get Supabase client
+            const supabaseUrl = 'https://kyathezublanpnjwansc.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5YXRoZXp1YmxhbnBuandhbnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5NTI0NjEsImV4cCI6MjA1NzUyODQ2MX0.gCdHDGP9RKk5sRABNh29oww2n74j1GUXlNctya11a7w';
+
+            // Use either window.supabase or global supabase
+            const supabaseLib = window.supabase || supabase;
+            const supabaseClient = supabaseLib.createClient(supabaseUrl, supabaseKey);
+
+            try {
+                // Check if user is authenticated
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+                if (error || !session) {
+                    console.error('Authentication error:', error);
+                    alert('Please login to access the payment page');
+                    window.location.href = '../auth/login.html';
+                    return;
+                }
+
+                // User is authenticated, load their profile info if available
+                const user = session.user;
+                console.log('Authenticated user:', user);
+
+                // Optional: Load user profile data
+                const { data: profile, error: profileError } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+
+                if (profile && !profileError) {
+                    console.log('User profile:', profile);
+                    // Display user name on the page
+                    document.getElementById('userName').textContent = profile.full_name || user.email;
+                    document.getElementById('userEmail').textContent = user.email;
+                }
+            } catch (error) {
+                console.error('Payment page authentication error:', error);
+                alert('Authentication error. Please login again.');
+                window.location.href = '../auth/login.html';
+            }
+        });
+    </script>
+
+</head>
+
+<body class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500">
+    <!-- Sidebar -->
+    <aside
+        class="max-w-62.5 ease-nav-brand z-990 fixed inset-y-0 my-4 ml-4 block w-full -translate-x-full flex-wrap items-center justify-between overflow-y-auto rounded-2xl border-0 bg-white p-0 antialiased shadow-none transition-transform duration-200 xl:left-0 xl:translate-x-0 xl:bg-transparent">
+        <div class="h-24">
+            <a class="" href="../../../public/index.html" target="_blank">
+                <img src="../../../../assets/symbol/Bitmap/Symbol-Primary.png" class="inline h-16 max-w-full ml-6 pl-8"
+                    alt="main_logo" />
+            </a>
+        </div>
+
+        <hr class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
+
+        <div class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
+            <ul class="flex flex-col pl-0 mb-0">
+                <li class="w-full mt-4">
+                    <h6 class="text-xl pl-6 ml-2 leading-tight uppercase opacity-60">Account pages</h6>
+                </li>
+
+                <li class="mt-0.5 w-full">
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+                        href="../Dashboard/dashboard.html">
+                        <div
+                            class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-1.5">
+                            <box-icon name='home-alt-2'></box-icon>
+                        </div>
+                        <span
+                            class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="mt-0.5 w-full">
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+                        href="../Settings/profile.html">
+                        <div
+                            class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-1.5">
+                            <i class="fas fa-user-circle text-grey"></i>
+                        </div>
+                        <span class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Profile</span>
+                    </a>
+                </li>
+
+                <li class="mt-0.5 w-full">
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+                        href="../Settings/settings.html">
+                        <div
+                            class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                            <i class="fas fa-cog text-grey"></i>
+                        </div>
+                        <span
+                            class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Settings</span>
+                    </a>
+                </li>
+
+                <!-- Logout Button -->
+                <li class="mt-0.5 w-full">
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors cursor-pointer"
+                        id="logoutButton">
+                        <div
+                            class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                            <i class="fas fa-sign-out-alt text-red-500"></i>
+                        </div>
+                        <span
+                            class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft text-red-500">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="ease-soft-in-out xl:ml-68.5 relative h-full max-h-screen bg-gray-50 transition-all duration-200">
+        <div class="w-full px-6 py-6 mx-auto">
+            <!-- Header -->
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-6">
+                    <div
+                        class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                        <div class="p-4 pb-0 mb-0 bg-white rounded-t-2xl">
+                            <h6 class="mb-1 text-2xl font-bold">Upgrade to Premium</h6>
+                            <p class="text-sm text-gray-600">Unlock advanced financial planning tools</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Card -->
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-6">
+                    <div
+                        class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                        <div class="p-6">
+                            <div class="flex flex-wrap md:flex-nowrap">
+                                <!-- Subscription Details -->
+                                <div class="w-full md:w-2/3 pr-0 md:pr-6">
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Premium Access Benefits</h2>
+                                    <ul class="space-y-3 text-lg">
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            Advanced expense tracking with custom categories
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            Budget analytics with smart recommendations
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            Bill payment reminders and alerts
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            Financial health score and improvement tips
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            Export financial reports in multiple formats
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            Unlimited savings goals with progress tracking
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            Bank and investment account integration
+                                        </li>
+                                    </ul>
+
+                                    <div class="mt-8">
+                                        <h3 class="text-xl font-bold text-gray-900 mb-3">Why Upgrade?</h3>
+                                        <p class="text-lg text-gray-700 mb-4">
+                                            Premium access unlocks powerful financial tools to help you take control of
+                                            your finances. Track expenses, create budgets, set savings goals, and get
+                                            personalized insights to improve your financial health.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Box -->
+                                <div class="w-full md:w-1/3 mt-6 md:mt-0">
+                                    <div class="bg-gray-50 rounded-xl p-6 border-2 border-blue-100 shadow-lg">
+                                        <h3 class="text-xl font-bold text-center mb-4">Premium Access</h3>
+                                        <div class="text-center mb-4">
+                                            <span class="text-3xl font-bold text-blue-600">₹599</span>
+                                            <span class="text-gray-500">one-time payment</span>
+                                        </div>
+                                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                            <p class="text-sm text-blue-800">
+                                                <i class="fas fa-info-circle mr-1"></i> This is a one-time payment with
+                                                lifetime access. No recurring charges.
+                                            </p>
+                                        </div>
+                                        <p class="text-center mb-4 text-gray-600">Subscribing as: <br />
+                                            <span id="userName" class="font-semibold text-gray-800">User
+                                                Name</span><br />
+                                            <span id="userEmail" class="text-sm text-gray-600">user@example.com</span>
+                                        </p>
+                                        <button id="paymentButton"
+                                            class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-lg text-lg font-bold transition-all hover:shadow-xl flex items-center justify-center">
+                                            <i class="fas fa-lock mr-2"></i> Pay ₹599 Once
+                                        </button>
+                                        <div class="flex justify-center mt-4">
+                                            <img src="https://cdn.razorpay.com/static/assets/logo/payment-method.svg"
+                                                alt="Payment methods" class="h-6" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQs Section -->
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-6">
+                    <div
+                        class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                        <div class="p-6">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+                            <div class="space-y-4">
+                                <div class="border-b pb-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">How will I be charged?</h3>
+                                    <p class="text-gray-600">
+                                        This is a one-time payment of ₹599. You will not be charged again in the future.
+                                        We accept all major credit cards and
+                                        UPI payments through our secure payment gateway.
+                                    </p>
+                                </div>
+                                <div class="border-b pb-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">How long does my access last?
+                                    </h3>
+                                    <p class="text-gray-600">
+                                        Once you make the payment, you will have lifetime access to all premium
+                                        features. There are no recurring fees or subscription periods.
+                                    </p>
+                                </div>
+                                <div class="border-b pb-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Is my payment information
+                                        secure?</h3>
+                                    <p class="text-gray-600">
+                                        Absolutely. We use Razorpay, a secure payment gateway that follows the highest
+                                        security standards. Your payment information is encrypted and never stored on
+                                        our
+                                        servers.
+                                    </p>
+                                </div>
+                                <div class="border-b pb-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">What happens after I pay?</h3>
+                                    <p class="text-gray-600">
+                                        Your account will be instantly upgraded to premium, and you'll have immediate
+                                        lifetime access to all premium features. You'll also receive a confirmation
+                                        email with
+                                        your payment receipt.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Razorpay payment button
+            document.getElementById('paymentButton').addEventListener('click', function () {
+                // Razorpay test mode key
+                const rzpKey = 'rzp_test_KjCLOoVaAluzh0';
+
+                const options = {
+                    key: rzpKey,
+                    amount: 59900, // Amount in paise (₹599)
+                    currency: 'INR',
+                    name: 'PFMS Superbase',
+                    description: 'Premium Access - Lifetime',
+                    image: '../../../../assets/symbol/Bitmap/Symbol-Primary.png',
+                    handler: function (response) {
+                        // Payment successful
+                        console.log('Payment successful:', response);
+
+                        // Store payment info in Supabase database
+                        const storePaymentRecord = async () => {
+                            try {
+                                // Get Supabase client
+                                const supabaseUrl = 'https://kyathezublanpnjwansc.supabase.co';
+                                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5YXRoZXp1YmxhbnBuandhbnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5NTI0NjEsImV4cCI6MjA1NzUyODQ2MX0.gCdHDGP9RKk5sRABNh29oww2n74j1GUXlNctya11a7w';
+                                const supabaseLib = window.supabase || supabase;
+                                const supabaseClient = supabaseLib.createClient(supabaseUrl, supabaseKey);
+
+                                // Get current user
+                                const { data: { session } } = await supabaseClient.auth.getSession();
+                                const user = session.user;
+
+                                // Payment data
+                                const paymentData = {
+                                    user_id: user.id,
+                                    payment_id: response.razorpay_payment_id,
+                                    amount: 599.00,
+                                    currency: 'INR',
+                                    status: 'success',
+                                    payment_method: 'razorpay',
+                                    subscription_type: 'premium_lifetime',
+                                    start_date: new Date().toISOString(),
+                                    end_date: new Date('2099-12-31').toISOString(), // Set far future date for lifetime access
+                                    is_active: true,
+                                    metadata: {
+                                        response_data: response,
+                                        user_email: user.email,
+                                        purchase_type: 'lifetime'
+                                    }
+                                };
+
+                                // Insert into payments table
+                                const { data, error } = await supabaseClient
+                                    .from('payments')
+                                    .insert(paymentData);
+
+                                if (error) {
+                                    console.error('Error storing payment record:', error);
+                                    // Continue anyway since localStorage backup exists
+                                } else {
+                                    console.log('Payment record stored in database:', data);
+                                }
+
+                                // Still store in localStorage as a fallback
+                                localStorage.setItem('isPremiumUser', 'true');
+                                localStorage.setItem('subscriptionDate', new Date().toISOString());
+                                localStorage.setItem('paymentId', response.razorpay_payment_id);
+
+                                // Show success message and redirect
+                                alert('Payment successful! You are now a premium user.');
+                                window.location.href = '../Saving/savings.html';
+
+                            } catch (error) {
+                                console.error('Error in payment processing:', error);
+                                // Fallback to localStorage only
+                                localStorage.setItem('isPremiumUser', 'true');
+                                localStorage.setItem('subscriptionDate', new Date().toISOString());
+                                localStorage.setItem('paymentId', response.razorpay_payment_id);
+
+                                alert('Payment successful! You are now a premium user. (Sync error occurred but your subscription is active)');
+                                window.location.href = '../Saving/saving.html';
+                            }
+                        };
+
+                        // Call the async function
+                        storePaymentRecord();
+                    },
+                    prefill: {
+                        name: document.getElementById('userName').textContent,
+                        email: document.getElementById('userEmail').textContent
+                    },
+                    theme: {
+                        color: '#4F46E5'
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            console.log('Payment modal closed');
+                        }
+                    }
+                };
+
+                const razorpayObj = new Razorpay(options);
+                razorpayObj.open();
+            });
+
+            // Logout button functionality
+            document.getElementById('logoutButton')?.addEventListener('click', function () {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('supabase.auth.token');
+                    window.location.href = '../auth/login.html';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

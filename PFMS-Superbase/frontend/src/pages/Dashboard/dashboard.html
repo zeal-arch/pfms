@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="76x76" href="../../../../assets/symbol/Bitmap/Symbol-Primary.png" />
+    <link rel="icon" type="image/png" href="../../../../assets/symbol/Bitmap/Symbol-Primary.png" />
+    <title>Tax Calculator</title>
+
+    <!-- Font Awesome Icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"
+        crossorigin="anonymous"></script>
+
+    <!-- Main Styling -->
+    <link href="../../styles/soft-ui-dashboard-tailwind.css" rel="stylesheet" />
+
+    <!-- Remove direct CDN of Tailwind and use the minified version instead -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    <!-- Tippy.js for tooltips - Use reliable CDN with crossorigin attribute -->
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/dist/tippy.css" crossorigin="anonymous">
+    <script src="https://unpkg.com/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js" crossorigin="anonymous"></script>
+
+    <!-- Boxicons -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Supabase JS - Use the reliable CDN without integrity check -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
+
+    <link href="../../styles/perfect-scrollbar.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: grey;
+        }
+
+        /* Dashboard-specific font size fixes - ensures proper scaling */
+        html,
+        body {
+            font-size: 11px !important;
+            /* Slightly smaller base font size for better readability */
+            -webkit-text-size-adjust: 100% !important;
+            -moz-text-size-adjust: 100% !important;
+            -ms-text-size-adjust: 100% !important;
+            text-size-adjust: 100% !important;
+        }
+
+        /* Reset text sizes to appropriate scale */
+        .text-3xl {
+            font-size: 1.75rem !important;
+        }
+
+        .text-2xl {
+            font-size: 1.375rem !important;
+        }
+
+        .text-xl {
+            font-size: 1.125rem !important;
+        }
+
+        .text-lg {
+            font-size: 1rem !important;
+        }
+
+        .text-base {
+            font-size: 0.875rem !important;
+        }
+
+        .text-sm {
+            font-size: 0.75rem !important;
+        }
+
+        .text-xs {
+            font-size: 0.625rem !important;
+        }
+
+        /* Fix sidebar navigation text */
+        aside span {
+            font-size: 1.125rem !important;
+        }
+
+        /* Fix table cell sizing */
+        td,
+        th {
+            padding: 0.5rem 0.75rem !important;
+        }
+
+        /* Fix container widths */
+        .container {
+            width: auto !important;
+            max-width: 1320px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+
+        /* Reduce spacing in tables and cards */
+        .px-4 {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        .py-2 {
+            padding-top: 0.375rem !important;
+            padding-bottom: 0.375rem !important;
+        }
+
+        /* Reduce form field height */
+        input,
+        select,
+        button {
+            height: auto !important;
+            padding: 0.375rem 0.5rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        .py-3 {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+
+        /* Reduce margins */
+        .mb-6 {
+            margin-bottom: 1rem !important;
+        }
+
+        .mb-4 {
+            margin-bottom: 0.75rem !important;
+        }
+
+        /* Form field specific adjustments */
+        .w-1\/3 {
+            width: 33.333333% !important;
+        }
+
+        /* Dashboard-specific styling - prevents globals.css overrides */
+        .dashboard-content {
+            font-family: Open Sans, sans-serif !important;
+        }
+
+        /* Custom styles for the progress steps */
+        .step-active {
+            @apply bg-green-500 text-white border-green-500;
+        }
+
+        .step-completed {
+            @apply bg-green-500 text-white border-green-500;
+        }
+
+        .step-pending {
+            @apply bg-gray-200 text-gray-600 border-gray-300;
+        }
+
+        /* Add a loading indicator */
+        .page-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: grey;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        /* Improve form layout to prevent layout shifts */
+        form input,
+        form select {
+            min-height: 42px !important;
+        }
+
+        /* Style for numeric input fields */
+        input[type="text"][inputmode="numeric"] {
+            font-weight: bold !important;
+            color: black !important;
+            text-align: right;
+            font-size: 0.875rem !important;
+        }
+
+        /* Ensure black text in all input fields */
+        input[type="text"],
+        input[type="number"] {
+            color: black;
+        }
+
+        /* Reduce the logo size */
+        .h-12 {
+            height: 2rem !important;
+        }
+
+        /* Fix the sidebar logo scale */
+        .scale-125 {
+            transform: scale(1) !important;
+        }
+    </style>
+
+</head>
+
+<body
+    class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500 dashboard-content">
+    <!-- Main wrapper div to contain both sidebar and content -->
+    <div class="flex w-full overflow-hidden">
+        <!-- Sidebar -->
+        <aside
+            class="fixed top-5 left-2 z-[1000] h-screen w-64 -translate-x-full bg-white shadow-xl transition-transform duration-300 xl:translate-x-0 overflow-y-auto ps">
+            <div class="h-24">
+                <a class="" href="../../../index/index.html" target="_blank">
+                    <img src="../../../../assets/symbol/Bitmap/Symbol-Primary.png"
+                        class="inline h-full max-w-full ml-6 pl-8 scale-125" alt="main_logo" />
+                </a>
+            </div>
+
+            <hr class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
+
+            <div class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
+                <ul class="flex flex-col pl-0 mb-0">
+                    <li class="w-full mt-4">
+                        <h6 class="text-xl pl-6 ml-2 leading-tight uppercase opacity-60">Account pages</h6>
+                    </li>
+
+                    <li class="mt-0.5 w-full">
+                        <a class="py-2.7 text-sm shadow-soft-ml ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+                            href="../Dashboard/dashboard.html">
+                            <div
+                                class="bg-gradient-to-tl from-red-600 to-red-400 shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-1.5">
+                                <box-icon name='home-alt-2'></box-icon>
+
+                            </div>
+                            <span
+                                class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="mt-0.5 w-full">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+                            href="../Saving/savings.html">
+                            <div
+                                class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                                <i class="fa-solid fa-piggy-bank"></i>
+                            </div>
+                            <span
+                                class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Saving</span>
+                        </a>
+                    </li>
+
+                    <li class="mt-0.5 w-full">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+                            href="../Settings/profile.html">
+                            <div
+                                class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-1.5">
+                                <i class="fas fa-user-circle text-grey"></i>
+
+                            </div>
+                            <span
+                                class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Profile</span>
+                        </a>
+                    </li>
+
+                    <!-- Logout Button -->
+                    <li class="mt-0.5 w-full">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors cursor-pointer"
+                            id="logoutButton">
+                            <div
+                                class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                                <i class="fas fa-sign-out-alt text-red-500"></i>
+                            </div>
+                            <span
+                                class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft text-red-500">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main content wrapper -->
+        <div class="w-full overflow-x-auto xl:ml-64 min-w-0">
+            <!-- Tax Calculator Content -->
+            <div class="w-full px-6 mx-auto">
+                <div class="container mx-auto">
+                    <div class="flex flex-wrap justify-center">
+                        <div class="w-full lg:w-10/12 mt-4">
+                            <!-- Tax Slabs Card -->
+                            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                                <div class="p-6">
+                                    <h2 class="text-3xl text-black font-bold">Income Tax Slabs FY 2025-26 (New Regime)
+                                    </h2>
+                                </div>
+                                <div class="p-6">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-2 text-left text-gray-900 font-bold text-xl">Income
+                                                    Range
+                                                </th>
+                                                <th class="px-4 py-2 text-left text-gray-900 font-bold text-xl">Tax Rate
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr>
+                                                <td class="px-4 py-2 text-gray-800 font-medium text-lg">Up to ₹4,00,000
+                                                </td>
+                                                <td class="px-4 py-2 text-green-700 font-semibold text-lg">0% (No tax)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2 text-gray-800 font-medium text-lg">₹4,00,001 –
+                                                    ₹8,00,000</td>
+                                                <td class="px-4 py-2 text-blue-700 font-semibold text-lg">5%</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2 text-gray-800 font-medium text-lg">₹8,00,001 –
+                                                    ₹12,00,000</td>
+                                                <td class="px-4 py-2 text-blue-700 font-semibold text-lg">10%</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2 text-gray-800 font-medium text-lg">₹12,00,001 –
+                                                    ₹16,00,000</td>
+                                                <td class="px-4 py-2 text-blue-700 font-semibold text-lg">15%</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2 text-gray-800 font-medium text-lg">₹16,00,001 –
+                                                    ₹20,00,000</td>
+                                                <td class="px-4 py-2 text-orange-700 font-semibold text-lg">20%</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2 text-gray-800 font-medium text-lg">₹20,00,001 –
+                                                    ₹24,00,000</td>
+                                                <td class="px-4 py-2 text-orange-700 font-semibold text-lg">25%</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-2 text-gray-800 font-medium text-lg">Above ₹24,00,000
+                                                </td>
+                                                <td class="px-4 py-2 text-red-700 font-semibold text-lg">30%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="mt-4 text-xl text-gray-600 bg-gray-50 p-4 rounded">
+                                        <p class="mb-2">* standard deduction of ₹75,000 applicable</p>
+                                        <p>* tax rebate up to ₹60,000 for income up to ₹12,00,000</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Important Notes Section with larger font -->
+                            <div class="bg-gray-200 p-6 rounded-lg mt-4">
+                                <h3 class="text-3xl font-semibold text-gray-800 mb-4">Important Notes:</h3>
+                                <ul class="space-y-3 text-gray-700 text-xl">
+                                    <li>• Standard Deduction: ₹75,000 for salaried individuals</li>
+                                    <li>• Tax Rebate (Section 87A): Up to ₹60,000 for income up to ₹12,00,000</li>
+                                    <li>• Effective Tax-Free Salary Limit: ₹12,75,000 for salaried individuals</li>
+                                    <li>• Health & Education Cess: 4% on tax amount after rebate</li>
+                                </ul>
+                            </div>
+
+                            <!-- Tax Calculator Section -->
+                            <div class="bg-gray-100 rounded-xl shadow-lg p-8 mb-8">
+                                <h1 class="text-3xl font-bold text-gray-900 mb-12">Calculate Your Income Tax</h1>
+
+                                <!-- Tax Calculator -->
+                                <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl border-2 border-gray-200">
+                                    <!-- Progress Steps -->
+                                    <div class="p-6 border-b-2 bg-gray-50 rounded-t-xl">
+                                        <div class="flex justify-between mb-4">
+                                            <div class="step-indicator text-lg font-medium">1. Basic Details</div>
+                                            <div class="step-indicator text-lg font-medium">2. Salary Details</div>
+                                            <div class="step-indicator text-lg font-medium">3. Additional Income</div>
+                                            <div class="step-indicator text-lg font-medium">4. Tax Calculation</div>
+                                        </div>
+                                        <div class="relative pt-1">
+                                            <div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-gray-200">
+                                                <div id="progress-bar"
+                                                    class="h-3 bg-blue-500 rounded-full transition-all duration-300"
+                                                    style="width: 25%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Form Steps -->
+                                    <div class="p-8 bg-white rounded-b-xl">
+                                        <!-- Step 1: Basic Details -->
+                                        <div id="step1" class="step-content">
+                                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Basic Details</h2>
+                                            <div class="space-y-6">
+                                                <div>
+                                                    <label class="block text-lg font-medium text-gray-800 mb-2"
+                                                        for="assessmentYear">Assessment
+                                                        Year</label>
+                                                    <select id="assessmentYear" aria-label="Assessment Year"
+                                                        class="w-full p-3 text-lg border border-gray-300 rounded-lg shadow-sm  ">
+                                                        <option value="2026-27">2026-27 (FY 2025-26)</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-lg font-medium text-gray-800 mb-2"
+                                                        for="residentialStatus">Residential
+                                                        Status</label>
+                                                    <select id="residentialStatus" aria-label="Residential Status"
+                                                        class="w-full p-3 text-lg border border-gray-300 rounded-lg shadow-sm  ">
+                                                        <option value="resident">Resident</option>
+                                                        <option value="nri">Non-Resident</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- Step 1 navigation -->
+                                            <div class="mt-8 flex justify-between">
+                                                <button id="step1PrevBtn"
+                                                    class="px-6 py-3 text-lg font-medium bg-gray-200 text-gray-700 rounded-lg border-2 border-gray-400">
+                                                    Previous
+                                                </button>
+                                                <button id="step1NextBtn"
+                                                    class="px-12 py-3 text-lg font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                                    style="padding-left: 3rem !important; padding-right: 3rem !important;">
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Step 2: Salary Details -->
+                                        <div id="step2" class="step-content hidden">
+                                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Salary Details</h2>
+                                            <div class="space-y-6">
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="basicSalary"
+                                                        data-tooltip="basicSalary">Basic Salary + DA
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="basicSalary"
+                                                        aria-label="Basic Salary and Dearness Allowance"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  "
+                                                        min="400001" required>
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="hraReceived"
+                                                        data-tooltip="hraReceived">HRA Received
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="hraReceived"
+                                                        aria-label="House Rent Allowance Received"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="rentPaid"
+                                                        data-tooltip="rentPaid">Rent Paid (Monthly)
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="rentPaid" aria-label="Monthly Rent Paid"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="isMetroCity"
+                                                        data-tooltip="isMetroCity">Metro City
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <div class="flex items-center">
+                                                        <input type="checkbox" id="isMetroCity"
+                                                            aria-label="Is Metro City"
+                                                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                                        <span class="ml-2 text-lg text-gray-700">Yes</span>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800"
+                                                        for="specialAllowance" data-tooltip="specialAllowance">Special
+                                                        Allowance
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="specialAllowance"
+                                                        aria-label="Special Allowance"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="bonus"
+                                                        data-tooltip="bonus">Performance Bonus
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="bonus" aria-label="Performance Bonus"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="lta"
+                                                        data-tooltip="lta">LTA
+                                                        Received
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="lta"
+                                                        aria-label="Leave Travel Allowance Received"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                            </div>
+                                            <!-- Step 2 navigation -->
+                                            <div class="mt-8 flex justify-between">
+                                                <button id="step2PrevBtn"
+                                                    class="px-6 py-3 text-lg font-medium bg-gray-200 text-gray-700 rounded-lg border-2 border-gray-400">
+                                                    Previous
+                                                </button>
+                                                <button id="step2NextBtn"
+                                                    class="px-12 py-3 text-lg font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                                    style="padding-left: 3rem !important; padding-right: 3rem !important;">
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Step 3: Additional Income -->
+                                        <div id="step3" class="step-content hidden">
+                                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Additional Income</h2>
+                                            <div class="space-y-6">
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800"
+                                                        for="savingsInterest" data-tooltip="savingsInterest">Interest
+                                                        from Savings
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="savingsInterest"
+                                                        aria-label="Interest from Savings Accounts"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="fdInterest"
+                                                        data-tooltip="fdInterest">Interest from FD
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="fdInterest"
+                                                        aria-label="Interest from Fixed Deposits"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                                <div
+                                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                                    <label class="text-lg font-medium text-gray-800" for="rentalIncome"
+                                                        data-tooltip="rentalIncome">Rental Income
+                                                        <i class="fa-duotone fa-solid fa-circle-info"></i>
+                                                    </label>
+                                                    <input type="number" id="rentalIncome" aria-label="Income from Rent"
+                                                        class="w-1/3 p-3 text-lg text-right border border-gray-300 rounded-lg shadow-sm  ">
+                                                </div>
+                                            </div>
+                                            <!-- Step 3 navigation -->
+                                            <div class="mt-8 flex justify-between">
+                                                <button id="step3PrevBtn"
+                                                    class="px-6 py-3 text-lg font-medium bg-gray-200 text-gray-700 rounded-lg border-2 border-gray-400">
+                                                    Previous
+                                                </button>
+                                                <button id="step3NextBtn"
+                                                    class="px-12 py-3 text-lg font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                                    style="padding-left: 3rem !important; padding-right: 3rem !important;">
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Step 4: Tax Calculation -->
+                                        <div id="step4" class="step-content hidden">
+                                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Tax Calculation</h2>
+
+                                            <!-- Income Summary -->
+                                            <div
+                                                class="bg-gray-50 p-6 rounded-xl border-2 border-gray-200 shadow-md mb-6">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-4">Income Summary</h3>
+                                                <div class="space-y-4">
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700">Total Salary Income:</span>
+                                                        <span id="totalSalaryDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700">Total Other Income:</span>
+                                                        <span id="totalOtherIncomeDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700">Gross Total Income:</span>
+                                                        <span id="grossIncomeDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Tax Calculation -->
+                                            <div
+                                                class="bg-gray-50 p-6 rounded-xl border-2 border-gray-200 shadow-md mb-6">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-4">Tax Calculation</h3>
+                                                <div class="space-y-4">
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700"
+                                                            data-tooltip="standardDeduction">Standard Deduction:</span>
+                                                        <span id="standardDeductionDisplay"
+                                                            class="text-xl font-bold text-red-600">- ₹75,000</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700"
+                                                            data-tooltip="exemptions">Exemptions (HRA, LTA):</span>
+                                                        <span id="exemptionsDisplay"
+                                                            class="text-xl font-bold text-red-600">- ₹0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700">Taxable Income:</span>
+                                                        <span id="taxableIncomeDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700">Basic Tax:</span>
+                                                        <span id="basicTaxDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700"
+                                                            data-tooltip="section87A">Tax
+                                                            Rebate (87A):</span>
+                                                        <span id="rebateDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700"
+                                                            data-tooltip="surcharge">Surcharge:</span>
+                                                        <span id="surchargeDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2 border-b">
+                                                        <span class="text-lg text-gray-700" data-tooltip="cess">Health &
+                                                            Education Cess:</span>
+                                                        <span id="cessDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                    <div
+                                                        class="flex justify-between items-center font-semibold py-2 border-b">
+                                                        <span class="text-lg text-gray-700">Total Tax Liability:</span>
+                                                        <span id="totalTaxDisplay"
+                                                            class="text-xl font-bold text-gray-900">₹0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Income Distribution Chart -->
+                                            <div
+                                                class="bg-white p-6 rounded-xl border-2 border-gray-200 shadow-md mb-6">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-4">Income Distribution
+                                                </h3>
+                                                <div class="flex flex-col md:flex-row items-center justify-center">
+                                                    <div class="w-full md:w-1/2">
+                                                        <div class="chart-container"
+                                                            style="position: relative; height:300px; width:100%">
+                                                            <canvas id="taxDistributionChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full md:w-1/2 mt-4 md:mt-0 md:pl-6">
+                                                        <div class="space-y-2">
+                                                            <div class="flex items-center">
+                                                                <div class="w-4 h-4 rounded-full bg-purple-500 mr-2">
+                                                                </div>
+                                                                <span class="text-lg">Tax exemptions</span>
+                                                            </div>
+                                                            <div class="flex items-center">
+                                                                <div class="w-4 h-4 rounded-full bg-blue-500 mr-2">
+                                                                </div>
+                                                                <span class="text-lg">Taxable income</span>
+                                                            </div>
+                                                            <div class="flex items-center">
+                                                                <div class="w-4 h-4 rounded-full bg-blue-300 mr-2">
+                                                                </div>
+                                                                <span class="text-lg">Deductions</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Monthly Tax Breakdown -->
+                                            <div
+                                                class="bg-blue-100 p-6 rounded-xl border-2 border-blue-200 shadow-md mb-6">
+                                                <h3 class="text-xl font-bold text-blue-900 mb-4">Monthly Tax Breakdown
+                                                </h3>
+                                                <div class="space-y-4">
+                                                    <div
+                                                        class="flex justify-between items-center py-2 border-b border-blue-200">
+                                                        <span class="text-lg text-blue-800">Monthly Tax:</span>
+                                                        <span id="monthlyTaxDisplay"
+                                                            class="text-xl font-bold text-blue-900">₹0</span>
+                                                    </div>
+                                                    <div
+                                                        class="flex justify-between items-center py-2 border-b border-blue-200">
+                                                        <span class="text-lg text-blue-800">Monthly Income:</span>
+                                                        <span id="monthlyIncomeDisplay"
+                                                            class="text-xl font-bold text-blue-900">₹0</span>
+                                                    </div>
+                                                    <div
+                                                        class="flex justify-between items-center py-2 border-b border-blue-200">
+                                                        <span class="text-lg text-blue-800">Monthly Income After
+                                                            Tax:</span>
+                                                        <span id="monthlyIncomeAfterTaxDisplay"
+                                                            class="text-xl font-bold text-blue-900">₹0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 4 specific navigation -->
+                                            <div class="flex justify-between items-center mt-8">
+                                                <button id="step4PrevBtn"
+                                                    class="px-6 py-3 text-lg font-medium bg-gray-200 text-gray-700 rounded-lg border-2 border-gray-400">
+                                                    Previous
+                                                </button>
+                                                <div class="flex space-x-4">
+                                                    <a href="javascript:void(0)" onclick="checkSubscriptionStatus()"
+                                                        class="group px-6 py-3 text-lg font-medium bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer no-underline">
+                                                        <i
+                                                            class="fas fa-piggy-bank text-xl group-hover:animate-bounce"></i>
+                                                        Manage Your Finances
+                                                        <i class="fas fa-coins text-xl group-hover:animate-pulse"></i>
+                                                    </a>
+                                                    <button id="resetBtn"
+                                                        class="px-6 py-3 text-lg font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                                                        Reset Calculator
+                                                    </button>
+                                                    <button id="saveCalculationBtn"
+                                                        class="px-6 py-3 text-lg font-medium bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                                                        <i class="fas fa-save mr-2"></i>Save Calculation
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="dashboard.js"></script>
+
+</body>
+
+</html>

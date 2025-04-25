@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../assets/symbol/Bitmap/Symbol-Primary.png" />
+  <link rel="icon" type="image/png" href="../../../../assets/symbol/Bitmap/Symbol-Primary.png" />
+  <title>PFMS-PROFILE</title>
+
+  <!-- Critical inline CSS -->
+  <style>
+    /* Critical styles for initial rendering */
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      line-height: 1.5;
+      background-color: #f8f9fa;
+      color: #67748e;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .bg-white {
+      background-color: #fff;
+    }
+
+    .border {
+      border-width: 1px;
+    }
+
+    .border-gray-200 {
+      border-color: #e9ecef;
+    }
+
+    .rounded-sm {
+      border-radius: 0.125rem;
+    }
+
+    .p-8 {
+      padding: 2rem;
+    }
+
+    .m-0 {
+      margin: 0;
+    }
+
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .text-black {
+      color: #000;
+    }
+
+    .text-base {
+      font-size: 1rem;
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .font-medium {
+      font-weight: 500;
+    }
+
+    .space-y-7>*+* {
+      margin-top: 1.75rem;
+    }
+
+    .max-w-6xl {
+      max-width: 72rem;
+    }
+
+    /* Add loading spinner styles */
+    .loading-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Alert styles */
+    .alert {
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.375rem;
+      display: none;
+    }
+
+    .alert-success {
+      background-color: #def7ec;
+      border-color: #31c48d;
+      color: #03543f;
+    }
+
+    .alert-error {
+      background-color: #fde8e8;
+      border-color: #f98080;
+      color: #9b1c1c;
+    }
+
+    .field-error {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    /* Export button specific styling */
+    #exportDataBtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 250px;
+      padding: 12px 24px;
+      background-image: linear-gradient(to right, #7e3af2, #6366f1);
+      color: white;
+      font-weight: 700;
+      font-size: 1.125rem;
+      border: 2px solid #7e3af2;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    #exportDataBtn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      background-image: linear-gradient(to right, #6c2bd9, #5a67d8);
+    }
+
+    #exportDataBtn:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(126, 58, 242, 0.5);
+    }
+
+    #exportDataBtn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    #exportDataBtn i {
+      margin-right: 0.75rem;
+      font-size: 1.25rem;
+    }
+  </style>
+
+  <!-- Fonts and icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"
+    crossorigin="anonymous"></script>
+
+  <!-- Fallback for Font Awesome -->
+  <script>
+    window.addEventListener('load', function () {
+      // Check if Font Awesome is loaded
+      if (typeof FontAwesome === 'undefined') {
+        console.warn('Font Awesome not loaded, using fallback icons');
+        // Replace all FA icons with text symbols
+        document.querySelectorAll('.fas.fa-trash-alt').forEach(icon => {
+          icon.textContent = '🗑️';
+          icon.classList.remove('fas', 'fa-trash-alt');
+        });
+      }
+    });
+  </script>
+
+  <!-- Preload main CSS -->
+  <link rel="preload" href="../../../src/styles/soft-ui-dashboard-tailwind.css?v=1.0.5" as="style" />
+  <link href="../../../src/styles/soft-ui-dashboard-tailwind.css?v=1.0.5" rel="stylesheet" />
+
+  <!-- Supabase JS with defer -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+  <!-- Nepcha Analytics -->
+  <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+  <!-- Inline critical authentication script -->
+  <script>
+    // Authentication check
+    document.addEventListener('DOMContentLoaded', async function () {
+      console.log('DOM loaded, initializing authentication');
+      // Only proceed with authentication after DOM is ready
+      if (typeof supabase === 'undefined') {
+        console.log('Loading supabase dynamically');
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        script.onload = initializeAuth;
+        document.body.appendChild(script);
+      } else {
+        console.log('Supabase already loaded, initializing auth');
+        initializeAuth();
+      }
+
+      function initializeAuth() {
+        try {
+          // Get Supabase credentials 
+          const supabaseUrl = 'https://kyathezublanpnjwansc.supabase.co';
+          const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5YXRoZXp1YmxhbnBuandhbnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5NTI0NjEsImV4cCI6MjA1NzUyODQ2MX0.gCdHDGP9RKk5sRABNh29oww2n74j1GUXlNctya11a7w';
+          const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+          console.log('Supabase client created, checking authentication');
+          checkAuthentication(supabaseClient);
+        } catch (error) {
+          console.error('Error initializing Supabase:', error);
+          alert('Error initializing application. Please try again.');
+        }
+      }
+
+      async function checkAuthentication(supabaseClient) {
+        try {
+          console.log('Checking authentication status');
+          // Check if user is authenticated
+          const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+          if (error || !session) {
+            console.error('Authentication error:', error);
+            alert('Please login to access your profile');
+            window.location.href = '../auth/login.html';
+            return;
+          }
+
+          // User is authenticated, load their profile info
+          const user = session.user;
+          console.log('Authenticated user:', user);
+
+          // Load user profile data
+          const { data: profile, error: profileError } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('auth_id', user.id)
+            .single();
+
+          if (profile && !profileError) {
+            console.log('User profile loaded:', profile);
+            // Populate profile form fields with user data
+            populateProfileData(profile, user);
+          } else {
+            console.error('Error loading profile:', profileError);
+
+            // Profile doesn't exist, create a new one
+            console.log('Creating new profile for user:', user.id);
+
+            // First check if a profile already exists (to handle race conditions or failed previous attempts)
+            const { data: existingProfiles, error: checkError } = await supabaseClient
+              .from('profiles')
+              .select('id')
+              .eq('auth_id', user.id);
+
+            if (checkError) {
+              console.error('Error checking for existing profile:', checkError);
+            }
+
+            // If profile already exists, use it instead of creating a new one
+            if (existingProfiles && existingProfiles.length > 0) {
+              console.log('Found existing profile for user:', user.id);
+
+              // Load the existing profile
+              const { data: existingProfile, error: loadError } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', existingProfiles[0].id)
+                .single();
+
+              if (loadError) {
+                console.error('Error loading existing profile:', loadError);
+                alert('Error loading your profile. Please try again later.');
+                return;
+              }
+
+              console.log('Loaded existing profile:', existingProfile);
+              populateProfileData(existingProfile, user);
+              return;
+            }
+
+            // Get any user metadata
+            const metadata = user.user_metadata || {};
+
+            // Create initial profile
+            const newProfile = {
+              auth_id: user.id,
+              first_name: metadata.first_name || '',
+              last_name: metadata.last_name || '',
+              created_at: new Date(),
+              updated_at: new Date()
+            };
+
+            console.log('Attempting to create profile with data:', newProfile);
+
+            // Insert new profile
+            try {
+              const { data: createdProfile, error: createError } = await supabaseClient
+                .from('profiles')
+                .insert(newProfile)
+                .select()
+                .single();
+
+              if (createError) {
+                console.error('Error creating profile:', createError);
+                let errorMessage = 'Error creating your profile. ';
+
+                // Provide more specific error messages based on error type
+                if (createError.code === '23505') {
+                  errorMessage += 'A profile for this account already exists.';
+                } else if (createError.code === '42P01') {
+                  errorMessage += 'Database table not found.';
+                } else if (createError.code === '42703') {
+                  errorMessage += 'Database schema mismatch.';
+                } else {
+                  errorMessage += 'Please try again later.';
+                }
+
+                alert(errorMessage);
+                return;
+              }
+
+              console.log('New profile created:', createdProfile);
+              populateProfileData(createdProfile || newProfile, user);
+            } catch (error) {
+              console.error('Unexpected error creating profile:', error);
+              alert('An unexpected error occurred. Please try again later.');
+            }
+          }
+        } catch (error) {
+          console.error('Profile authentication error:', error);
+          alert('Authentication error. Please login again.');
+          window.location.href = '../auth/login.html';
+        }
+      }
+    });
+
+    // Function to populate profile data in the form
+    function populateProfileData(profile, user) {
+      // Set values in form fields if they exist
+      const setFieldValue = (fieldId, value) => {
+        const field = document.getElementById(fieldId);
+        if (field && value !== undefined && value !== null) field.value = value;
+      };
+
+      // Set text content for display elements
+      const setTextContent = (elemSelector, value) => {
+        const elements = document.querySelectorAll(elemSelector);
+        if (elements.length > 0 && value) {
+          elements.forEach(elem => elem.textContent = value);
+        }
+      };
+
+      // Ensure profile is an object
+      profile = profile || {};
+
+      // Debug log to check what profile data we're receiving
+      console.log('Profile data to populate:', profile);
+
+      // Set user email in the email field
+      setFieldValue('email', user.email);
+
+      // Handle name fields
+      setFieldValue('first_name', profile.first_name || '');
+      setFieldValue('last_name', profile.last_name || '');
+
+      // Set other profile fields
+      setFieldValue('phone', profile.phone_number || '');
+
+      // Set display name in UI elements - use first_name/last_name
+      const displayName =
+        `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.email;
+
+      setTextContent('.profile-name', displayName);
+      setTextContent('.profile-email', user.email);
+
+      // Update account info if available
+      if (profile.created_at) {
+        setFieldValue('join_date', new Date(profile.created_at).toLocaleDateString('en-US'));
+      }
+      if (user.last_sign_in_at) {
+        setFieldValue('last_login', new Date(user.last_sign_in_at).toLocaleDateString('en-US'));
+      }
+      setFieldValue('account_status', 'Active');
+    }
+  </script>
+</head>
+
+<body class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500">
+
+  <aside
+    class="fixed top-0 left-0 z-[1000] h-screen w-64 -translate-x-full bg-white shadow-xl transition-transform duration-300 xl:translate-x-0 overflow-y-auto ps">
+    <div class="h-19.5">
+      <a class="" href="../../../index/index.html" target="_blank">
+        <img src="../../../../assets/symbol/Bitmap/Symbol-Primary.png" class="inline h-full max-w-full ml-6 pl-8"
+          alt="main_logo" />
+      </a>
+    </div>
+
+    <hr class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
+
+    <div class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
+      <ul class="flex flex-col pl-0 mb-0">
+        <li class="w-full mt-4">
+          <h6 class="text-xl pl-6 ml-2 leading-tight uppercase opacity-60">Account pages</h6>
+        </li>
+
+        <li class="mt-0.5 w-full">
+          <a class="py-2.7 text-sm shadow-soft-xl ease-nav-brand my-0 mx-4 flex items-center rounded-lg px-4 font-semibold text-slate-700"
+            href="../Settings/profile.html">
+            <div
+              class="bg-gradient-to-tl from-red-600 to-red-400 shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-1.5">
+              <i class="fa-regular fa-user"></i>
+            </div>
+            <span class="text-xl ml-1 pointer-events-none ease-soft">Profile</span>
+          </a>
+        </li>
+
+        <li class="mt-0.5 w-full">
+          <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+            href="../Dashboard/dashboard.html">
+            <div
+              class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+              <i class="fa-solid fa-house"></i>
+            </div>
+            <span class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Dashboard</span>
+          </a>
+        </li>
+
+        <li class="mt-0.5 w-full">
+          <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+            href="../Saving/saving.html">
+            <div
+              class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+              <i class="fa-solid fa-piggy-bank"></i>
+            </div>
+            <span class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Saving</span>
+          </a>
+        </li>
+
+        <!-- Logout Button -->
+        <li class="mt-0.5 w-full">
+          <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors cursor-pointer"
+            id="logoutButton">
+            <div
+              class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+              <i class="fas fa-sign-out-alt text-red-500"></i>
+            </div>
+            <span class="text-xl ml-1 duration-300 opacity-100 pointer-events-none ease-soft text-red-500">Logout</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="ease-soft-in-out xl:ml-68.5 relative h-full max-h-screen bg-gray-50 transition-all duration-200">
+    <nav
+      class="absolute z-20 flex flex-wrap items-center justify-between w-full px-6 py-2 text-white transition-all shadow-none duration-250 ease-soft-in lg:flex-nowrap lg:justify-start"
+      navbar-profile navbar-scroll="true">
+      <div class="flex items-center justify-between w-full px-6 py-1 mx-auto flex-wrap-inherit">
+      </div>
+    </nav>
+
+    <div class="w-full px-6 mx-auto">
+      <!-- User banner section with optimized image loading -->
+      <div class="relative flex items-center p-0 mt-6 overflow-hidden bg-center bg-cover min-h-75 rounded-2xl"
+        style="background-image: linear-gradient(to right, rgba(138, 92, 246, 0.9), rgba(138, 92, 246, 0.9));">
+        <!-- Use a CSS background color as a placeholder until image loads -->
+        <span class="absolute inset-0 bg-center bg-cover w-full h-full"
+          style="background-image: url('../../../assets/img/curved-images/curved0.jpg'); opacity: 0; transition: opacity 0.5s ease;"
+          onload="this.style.opacity='0.8'"></span>
+      </div>
+
+      <!-- User profile card with optimized image loading -->
+      <div
+        class="relative flex flex-col flex-auto min-w-0 p-6 mx-6 -mt-16 overflow-hidden break-words border-0 shadow-xl rounded-2xl bg-white/80 bg-clip-border backdrop-blur-2xl backdrop-saturate-200">
+        <div class="flex flex-wrap -mx-3">
+
+          <div class="flex-none w-auto max-w-full px-3 my-auto">
+            <div class="h-full">
+              <h5 class="mb-1 text-xl font-semibold profile-name"></h5>
+            </div>
+          </div>
+          <div class="ml-auto">
+            <a id="privacy-shortcut"
+              class="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-700 rounded-md hover:bg-purple-200 transition-colors" ">
+              <i class=" fas fa-lock mr-2"></i> Privacy Settings
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-grow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- Settings Tabs -->
+        <div class="mb-8 border-b border-gray-200">
+          <div class="flex -mb-px space-x-8">
+            <button id="tab-profile"
+              class="px-8 py-4 text-lg font-medium border-b-2 border-transparent text-gray-500 hover:text-purple-700 hover:border-purple-300 focus:outline-none focus:text-purple-700 focus:border-purple-700 transition-all duration-200 flex items-center"
+              aria-label="Show profile section">
+              <i class="fas fa-user mr-2 text-xl"></i>Personal Information
+            </button>
+
+            <button id="tab-security"
+              class="px-8 py-4 text-lg font-medium border-b-2 border-transparent text-gray-500 hover:text-purple-700 hover:border-purple-300 focus:outline-none focus:text-purple-700 focus:border-purple-700 transition-all duration-200 flex items-center"
+              aria-label="Show security section">
+              <i class="fas fa-shield-alt mr-2 text-xl"></i>Security
+            </button>
+
+            <button id="tab-privacy"
+              class="px-8 py-4 text-lg font-medium border-b-2 border-transparent text-gray-500 hover:text-purple-700 hover:border-purple-300 focus:outline-none focus:text-purple-700 focus:border-purple-700 transition-all duration-200 flex items-center"
+              aria-label="Show privacy section">
+              <i class="fas fa-lock mr-2 text-xl"></i>Privacy
+            </button>
+
+            <button id="tab-account"
+              class="px-8 py-4 text-lg font-medium border-b-2 border-transparent text-gray-500 hover:text-purple-700 hover:border-purple-300 focus:outline-none focus:text-purple-700 focus:border-purple-700 transition-all duration-200 flex items-center"
+              aria-label="Show account section">
+              <i class="fas fa-user-circle mr-2 text-xl"></i>Account
+            </button>
+          </div>
+        </div>
+
+        <!-- Profile Section with Enhanced Design -->
+        <div id="section-profile" class="settings-section">
+          <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden border border-purple-100">
+            <!-- Enhanced Header with Gradient -->
+            <div class="px-4 py-3 sm:px-6 bg-gradient-to-r from-purple-50 to-purple-100">
+              <h2 class="text-xl font-bold text-purple-800 flex items-center">
+                <i class="fas fa-user-circle mr-2"></i>Personal Information
+              </h2>
+              <p class="text-sm text-gray-600 mt-1">Update your personal details and contact information.</p>
+            </div>
+
+            <!-- Improved Form Layout -->
+            <div class="p-4 sm:p-5">
+              <form id="profileForm" class="space-y-4">
+                <div id="formAlert" class="alert" role="alert"></div>
+
+                <div class="bg-white p-4 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                  <div>
+                    <label for="first_name" class="block text-lg font-medium text-gray-800 mb-1">First name</label>
+                    <input type="text" name="first_name" id="first_name"
+                      class="block w-full border border-gray-300 p-2 text-lg h-10 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="First name" required>
+                    <div id="first_name_error" class="field-error"></div>
+                  </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                  <div>
+                    <label for="last_name" class="block text-lg font-medium text-gray-800 mb-1">Last name</label>
+                    <input type="text" name="last_name" id="last_name"
+                      class="block w-full border border-gray-300 p-2 text-lg h-10 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="Last name" required>
+                    <div id="last_name_error" class="field-error"></div>
+                  </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                  <div>
+                    <label for="email" class="block text-lg font-medium text-gray-800 mb-1">Email address</label>
+                    <input type="email" name="email" id="email" disabled
+                      class="block w-full border border-gray-300 p-2 text-lg bg-gray-50 text-gray-500 h-10 rounded-md"
+                      placeholder="your.email@example.com">
+                    <p class="mt-1 text-sm text-gray-600">Email cannot be changed. Contact support for assistance.</p>
+                  </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                  <div>
+                    <label for="phone" class="block text-lg font-medium text-gray-800 mb-1">Phone number</label>
+                    <input type="tel" name="phone" id="phone"
+                      class="block w-full border border-gray-300 p-2 text-lg h-10 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="(123) 456-7890">
+                  </div>
+                </div>
+
+                <!-- Enhanced Action button -->
+                <div class="pt-3 flex justify-end items-center" style="margin-top: 15px;">
+                  <div id="saveSpinner" class="loading-spinner"
+                    style="display: none; width: 16px; height: 16px; border: 2px solid #f3f3f3; border-top: 2px solid #8b5cf6; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px;">
+                  </div>
+                  <button type="submit" id="saveProfileBtn"
+                    style="background-color: #8b5cf6; color: white; font-size: 14px; font-weight: bold; padding: 8px 16px; border-radius: 6px; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: inline-block; min-width: 120px;">
+                    Save Changes
+                  </button>
+                  <button type="button" id="cancelProfileBtn"
+                    style="margin-left: 12px; background-color: #f9fafb; color: #374151; font-size: 14px; padding: 8px 16px; border-radius: 6px; border: 1px solid #d1d5db; cursor: pointer; display: inline-block;">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Section with Enhanced Design -->
+        <div id="section-security" class="settings-section hidden">
+          <div class="space-y-6">
+            <!-- Password Change -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-purple-100">
+              <div class="px-6 py-6 sm:px-8 bg-gradient-to-r from-purple-50 to-purple-100">
+                <h2 class="text-2xl font-bold text-purple-800 flex items-center">
+                  <i class="fas fa-lock mr-3"></i>Password Management
+                </h2>
+                <p class="mt-2 text-md text-gray-600">Update your password and secure your account.</p>
+              </div>
+              <div class="px-6 py-8 sm:px-8">
+                <form id="passwordChangeForm" class="space-y-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div
+                      class="bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                      <label for="currentPassword" id="label_current_password"
+                        class="block text-lg font-medium text-gray-800 mb-2">Current Password</label>
+                      <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="password" name="currentPassword" id="currentPassword"
+                          aria-labelledby="label_current_password"
+                          class="pr-10 p-3 text-lg h-12 focus:ring-purple-500 focus:border-purple-500 block w-full border-gray-300 rounded-md"
+                          placeholder="Enter current password">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer password-toggle">
+                          <i class="fas fa-eye text-gray-400" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                      <div class="h-0.5 bg-purple-100 my-2"></div>
+                    </div>
+                    <div
+                      class="bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                      <label for="newPassword" id="label_new_password"
+                        class="block text-lg font-medium text-gray-800 mb-2">New Password</label>
+                      <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="password" name="newPassword" id="newPassword" aria-labelledby="label_new_password"
+                          class="pr-10 p-3 text-lg h-12 focus:ring-purple-500 focus:border-purple-500 block w-full border-gray-300 rounded-md"
+                          placeholder="Enter new password">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer password-toggle">
+                          <i class="fas fa-eye text-gray-400" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                      <!-- Password strength meter with improved styling -->
+                      <div class="mt-4">
+                        <div class="strength-meter flex space-x-1 h-2">
+                          <div id="strength1" class="flex-1 rounded-full bg-gray-200"></div>
+                          <div id="strength2" class="flex-1 rounded-full bg-gray-200"></div>
+                          <div id="strength3" class="flex-1 rounded-full bg-gray-200"></div>
+                          <div id="strength4" class="flex-1 rounded-full bg-gray-200"></div>
+                        </div>
+                        <p id="strengthText" class="text-sm text-gray-500 mt-2">Password strength</p>
+                      </div>
+                    </div>
+                    <div
+                      class="bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                      <label for="confirmPassword" id="label_confirm_password"
+                        class="block text-lg font-medium text-gray-800 mb-2">Confirm New Password</label>
+                      <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="password" name="confirmPassword" id="confirmPassword"
+                          aria-labelledby="label_confirm_password"
+                          class="pr-10 p-3 text-lg h-12 focus:ring-purple-500 focus:border-purple-500 block w-full border-gray-300 rounded-md"
+                          placeholder="Confirm new password">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer password-toggle">
+                          <i class="fas fa-eye text-gray-400" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                      <p id="passwordMatch" class="text-sm mt-2 text-gray-500">Passwords must match</p>
+                    </div>
+                  </div>
+                  <div class="flex justify-end">
+                    <button type="submit"
+                      class="inline-flex justify-center py-3 px-8 border border-transparent shadow-lg text-lg font-bold rounded-md text-white bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all transform hover:scale-105"
+                      aria-label="Update password">Update Password</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy Section -->
+        <div id="section-privacy" class="settings-section hidden">
+          <div class="space-y-6">
+            <!-- Data Privacy -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden settings-card border border-purple-100">
+              <div class="px-6 py-6 sm:px-8 bg-gradient-to-r from-purple-50 to-purple-100">
+                <h2 class="text-2xl font-bold text-purple-800 section-header flex items-center">
+                  <i class="fas fa-shield-alt mr-3"></i>Data Privacy
+                </h2>
+                <p class="mt-2 text-md text-gray-600 section-description">
+                  Manage your personal data and privacy settings. Control how your information is stored and used.
+                </p>
+              </div>
+
+              <div class="px-6 py-8 sm:px-8 space-y-8">
+                <!-- Export Data Section -->
+                <div class="bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">Export Your Data</h3>
+                  <p class="mt-1 text-sm text-gray-500 mb-4">Download a complete copy of your personal data in JSON
+                    format for your records.</p>
+                  <div class="mt-6 flex justify-start">
+                    <button id="exportDataBtn" type="button"
+                      class="inline-flex items-center px-4 py-2 border border-purple-500 text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all"
+                      style="min-width: 150px; display: inline-flex !important;" aria-label="Export personal data">
+                      <i class="fas fa-download mr-2 text-sm" aria-hidden="true"></i> Export My Data
+                    </button>
+                  </div>
+                  <p class="mt-4 text-xs text-left text-gray-500">Your data will be exported as a JSON file that you
+                    can save to your device.</p>
+                </div>
+
+                <!-- Data Retention Section -->
+                <div class="bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">Transaction History Retention</h3>
+                  <p class="mt-1 text-sm text-gray-500 mb-4">Control how long we keep your financial transaction
+                    history.</p>
+                  <div class="mt-4">
+                    <div class="max-w-lg mx-auto">
+                      <div class="mt-4 space-y-4">
+                        <div class="flex items-center p-3 rounded-md hover:bg-purple-50 transition-colors">
+                          <input id="retention-all" name="retention" type="radio" checked
+                            class="focus:ring-purple-500 h-5 w-5 text-purple-600 border-gray-300"
+                            aria-labelledby="retention-all-label">
+                          <label id="retention-all-label" for="retention-all"
+                            class="ml-3 block text-md font-medium text-gray-700">Keep all my
+                            data indefinitely</label>
+                        </div>
+                        <div class="flex items-center p-3 rounded-md hover:bg-purple-50 transition-colors">
+                          <input id="retention-year" name="retention" type="radio"
+                            class="focus:ring-purple-500 h-5 w-5 text-purple-600 border-gray-300"
+                            aria-labelledby="retention-year-label">
+                          <label id="retention-year-label" for="retention-year"
+                            class="ml-3 block text-md font-medium text-gray-700">Keep only the
+                            last one year of transaction history</label>
+                        </div>
+                        <div class="flex items-center p-3 rounded-md hover:bg-purple-50 transition-colors">
+                          <input id="retention-manual" name="retention" type="radio"
+                            class="focus:ring-purple-500 h-5 w-5 text-purple-600 border-gray-300"
+                            aria-labelledby="retention-manual-label">
+                          <label id="retention-manual-label" for="retention-manual"
+                            class="ml-3 block text-md font-medium text-gray-700">Let me delete
+                            transaction history manually</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                      <button
+                        class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+                        Save Preferences
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual separator between sections -->
+        <div class="my-12 border-t-2 border-purple-100 max-w-7xl mx-auto"></div>
+
+        <!-- Account Section with Enhanced Design -->
+        <div id="section-account" class="settings-section hidden">
+          <div class="space-y-6">
+            <!-- Account Information -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-purple-100">
+              <div class="px-6 py-6 sm:px-8 bg-gradient-to-r from-purple-50 to-purple-100">
+                <h2 class="text-2xl font-bold text-purple-800 flex items-center">
+                  <i class="fas fa-user-shield mr-3"></i>Account Information
+                </h2>
+                <p class="mt-2 text-md text-gray-600">View and manage your account details.</p>
+              </div>
+              <div class="px-6 py-8 sm:px-8">
+                <div class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                  <div
+                    class="sm:col-span-1 bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                    <dt class="text-lg font-medium text-gray-800">Account Status</dt>
+                    <dd class="mt-3">
+                      <input type="text" id="account_status" readonly
+                        class="bg-gray-100 border-0 focus:ring-0 w-full p-3 text-lg rounded-md"
+                        aria-label="Account status" placeholder="Account status">
+                    </dd>
+                  </div>
+                  <div
+                    class="sm:col-span-1 bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                    <dt class="text-lg font-medium text-gray-800">Member Since</dt>
+                    <dd class="mt-3">
+                      <input type="text" id="join_date" readonly
+                        class="bg-gray-100 border-0 focus:ring-0 w-full p-3 text-lg rounded-md" aria-label="Join date"
+                        placeholder="Join date">
+                    </dd>
+                  </div>
+                  <div
+                    class="sm:col-span-1 bg-white p-6 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                    <dt class="text-lg font-medium text-gray-800">Last Login</dt>
+                    <dd class="mt-3">
+                      <input type="text" id="last_login" readonly
+                        class="bg-gray-100 border-0 focus:ring-0 w-full p-3 text-lg rounded-md"
+                        aria-label="Last login date" placeholder="Last login date">
+                    </dd>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Danger Zone with Enhanced Design -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-red-200">
+              <div class="px-6 py-6 sm:px-8 bg-gradient-to-r from-red-50 to-red-100">
+                <h2 class="text-2xl font-bold text-red-800 flex items-center">
+                  <i class="fas fa-exclamation-triangle mr-3"></i>Danger Zone
+                </h2>
+                <p class="mt-1 text-md text-red-600">Actions here cannot be undone.</p>
+              </div>
+              <div class="px-6 py-8 sm:px-8">
+                <div class="space-y-6">
+                  <div class="bg-white p-6 rounded-lg border border-red-200 shadow-sm hover:shadow-md transition-all">
+                    <h3 class="text-xl font-bold text-gray-900">Delete Account</h3>
+                    <div class="mt-4 max-w-xl text-md text-gray-600">
+                      <p>Once you delete your account, all of your data will be permanently removed.
+                        This action cannot be undone.</p>
+                    </div>
+
+                    <!-- Alternative Delete Account UI -->
+                    <div
+                      style="margin-top: 20px; border: 2px solid #ef4444; border-radius: 8px; padding: 16px; background-color: #fee2e2;">
+                      <p style="color: #b91c1c; font-weight: bold; margin-bottom: 16px;">
+                        Click the button below to permanently delete your account and all associated data.
+                      </p>
+                      <button id="deleteAccountBtn"
+                        style="background-color: #dc2626; color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; display: inline-block;">
+                        Delete My Account
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="pt-4">
+      <div class="w-full px-6 mx-auto">
+        <div class="flex flex-wrap items-center -mx-3 lg:justify-between">
+          <div class="w-full max-w-full px-3 mt-0 mb-6 shrink-0 lg:mb-0 lg:w-1/2 lg:flex-none">
+            <div class="leading-normal text-center text-sm text-slate-500 lg:text-left">
+              ©2025 PFMS Copy Right Reserved
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Consolidated scripts at the end of the body -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../../assets/js/perfect-scrollbar.js"></script>
+  <script src="../../../assets/js/soft-ui-dashboard-tailwind.js?v=1.0.5"></script>
+
+  <script>
+    // Define supabaseClient in the global scope
+    let supabaseClient;
+
+    // Simplified and consolidated authentication script
+    document.addEventListener('DOMContentLoaded', async function () {
+      console.log('DOM loaded, initializing application');
+
+      // Initialize Supabase client
+      const supabaseUrl = 'https://kyathezublanpnjwansc.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5YXRoZXp1YmxhbnBuandhbnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5NTI0NjEsImV4cCI6MjA1NzUyODQ2MX0.gCdHDGP9RKk5sRABNh29oww2n74j1GUXlNctya11a7w';
+      supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+      // Check authentication and load profile data
+      try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+        if (error || !session) {
+          console.error('Authentication error:', error);
+          alert('Please login to access your profile');
+          window.location.href = '../auth/login.html';
+          return;
+        }
+
+        // User is authenticated, load their profile info
+        const user = session.user;
+        console.log('Authenticated user:', user);
+
+        // Load user profile data
+        const { data: profile, error: profileError } = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .eq('auth_id', user.id)
+          .single();
+
+        if (profile && !profileError) {
+          console.log('User profile loaded:', profile);
+          populateProfileData(profile, user);
+        } else {
+          console.error('Error loading profile:', profileError);
+
+          // Profile doesn't exist, create a new one
+          console.log('Creating new profile for user:', user.id);
+
+          // First check if a profile already exists (to handle race conditions or failed previous attempts)
+          const { data: existingProfiles, error: checkError } = await supabaseClient
+            .from('profiles')
+            .select('id')
+            .eq('auth_id', user.id);
+
+          if (checkError) {
+            console.error('Error checking for existing profile:', checkError);
+          }
+
+          // If profile already exists, use it instead of creating a new one
+          if (existingProfiles && existingProfiles.length > 0) {
+            console.log('Found existing profile for user:', user.id);
+
+            // Load the existing profile
+            const { data: existingProfile, error: loadError } = await supabaseClient
+              .from('profiles')
+              .select('*')
+              .eq('id', existingProfiles[0].id)
+              .single();
+
+            if (loadError) {
+              console.error('Error loading existing profile:', loadError);
+              alert('Error loading your profile. Please try again later.');
+              return;
+            }
+
+            console.log('Loaded existing profile:', existingProfile);
+            populateProfileData(existingProfile, user);
+            return;
+          }
+
+          // Get any user metadata
+          const metadata = user.user_metadata || {};
+
+          // Create initial profile
+          const newProfile = {
+            auth_id: user.id,
+            first_name: metadata.first_name || '',
+            last_name: metadata.last_name || '',
+            created_at: new Date(),
+            updated_at: new Date()
+          };
+
+          console.log('Attempting to create profile with data:', newProfile);
+
+          // Insert new profile
+          try {
+            const { data: createdProfile, error: createError } = await supabaseClient
+              .from('profiles')
+              .insert(newProfile)
+              .select()
+              .single();
+
+            if (createError) {
+              console.error('Error creating profile:', createError);
+              let errorMessage = 'Error creating your profile. ';
+
+              // Provide more specific error messages based on error type
+              if (createError.code === '23505') {
+                errorMessage += 'A profile for this account already exists.';
+              } else if (createError.code === '42P01') {
+                errorMessage += 'Database table not found.';
+              } else if (createError.code === '42703') {
+                errorMessage += 'Database schema mismatch.';
+              } else {
+                errorMessage += 'Please try again later.';
+              }
+
+              alert(errorMessage);
+              return;
+            }
+
+            console.log('New profile created:', createdProfile);
+            populateProfileData(createdProfile || newProfile, user);
+          } catch (error) {
+            console.error('Unexpected error creating profile:', error);
+            alert('An unexpected error occurred. Please try again later.');
+          }
+        }
+
+        // Initialize UI and tab functionality
+        initializeUI();
+
+      } catch (error) {
+        console.error('Authentication error:', error);
+        alert('Authentication error. Please login again.');
+        window.location.href = '../auth/login.html';
+      }
+    });
+
+    // Function to populate profile data in the form
+    function populateProfileData(profile, user) {
+      // Set values in form fields if they exist
+      const setFieldValue = (fieldId, value) => {
+        const field = document.getElementById(fieldId);
+        if (field && value !== undefined && value !== null) field.value = value;
+      };
+
+      // Set text content for display elements
+      const setTextContent = (elemSelector, value) => {
+        const elements = document.querySelectorAll(elemSelector);
+        if (elements.length > 0 && value) {
+          elements.forEach(elem => elem.textContent = value);
+        }
+      };
+
+      // Set user email in the email field
+      setFieldValue('email', user.email);
+
+      // Handle name fields
+      setFieldValue('first_name', profile.first_name || '');
+      setFieldValue('last_name', profile.last_name || '');
+
+      // Set other profile fields
+      setFieldValue('phone', profile.phone_number || '');
+
+      // Set display name in UI elements - use first_name/last_name
+      const displayName =
+        `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.email;
+
+      setTextContent('.profile-name', displayName);
+      setTextContent('.profile-email', user.email);
+
+      // Update account info if available
+      if (profile.created_at) {
+        setFieldValue('join_date', new Date(profile.created_at).toLocaleDateString('en-US'));
+      }
+      if (user.last_sign_in_at) {
+        setFieldValue('last_login', new Date(user.last_sign_in_at).toLocaleDateString('en-US'));
+      }
+      setFieldValue('account_status', 'Active');
+    }
+
+    // Initialize UI and attach event listeners
+    function initializeUI() {
+      console.log('Setting up tab navigation');
+      const tabs = document.querySelectorAll('[id^="tab-"]');
+      const sections = document.querySelectorAll('[id^="section-"]');
+
+      // Show the profile section by default
+      document.getElementById('section-profile')?.classList.remove('hidden');
+      document.getElementById('tab-profile')?.classList.add('border-purple-700', 'text-purple-700');
+      document.getElementById('tab-profile')?.classList.remove('border-transparent', 'text-gray-500');
+
+      // Tab switching functionality
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+          const tabId = this.id;
+          const sectionId = tabId.replace('tab-', 'section-');
+
+          console.log(`Tab clicked: ${tabId}, showing section: ${sectionId}`);
+
+          // Hide all sections and deactivate all tabs
+          sections.forEach(section => {
+            section.classList.add('hidden');
+          });
+
+          tabs.forEach(t => {
+            t.classList.remove('border-purple-700', 'text-purple-700');
+            t.classList.add('border-transparent', 'text-gray-500');
+          });
+
+          // Show selected section and activate selected tab
+          const selectedSection = document.getElementById(sectionId);
+          if (selectedSection) {
+            selectedSection.classList.remove('hidden');
+          }
+
+          // Apply consistent styling for all tabs
+          this.classList.add('border-purple-700', 'text-purple-700');
+          this.classList.remove('border-transparent', 'text-gray-500');
+
+          // Special handling for privacy section
+          if (tabId === 'tab-privacy') {
+            const exportBtn = document.getElementById('exportDataBtn');
+            if (exportBtn) {
+              exportBtn.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // Delete Account button functionality
+      const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+      if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', async function () {
+          if (confirm('WARNING: This action cannot be undone. Are you sure you want to delete your account and ALL your data?')) {
+            try {
+              // Show loading state
+              deleteAccountBtn.disabled = true;
+              deleteAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Deleting...';
+
+              // Get current user session
+              const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+              if (sessionError) throw new Error('Session error: ' + sessionError.message);
+
+              // First delete user profile from profiles table
+              const { error: profileDeletionError } = await supabaseClient
+                .from('profiles')
+                .delete()
+                .eq('auth_id', session.user.id);
+
+              if (profileDeletionError) {
+                console.error('Error deleting profile:', profileDeletionError);
+                // Continue with account deletion even if profile deletion fails
+              }
+
+              // Delete the user's auth account using the user-accessible method
+              try {
+                const { error: userDeletionError } = await supabaseClient.rpc('delete_user');
+
+                if (userDeletionError) {
+                  throw userDeletionError;
+                }
+
+                // Sign out the user after successful deletion
+                await supabaseClient.auth.signOut();
+                alert('Your account has been deleted successfully.');
+                window.location.href = '../auth/login.html';
+              } catch (deleteError) {
+                console.error('Error with delete_user RPC:', deleteError);
+
+                // If the RPC fails, try using the new version of Supabase client method if available
+                try {
+                  if (typeof supabaseClient.auth.deleteUser === 'function') {
+                    // This method is available in newer Supabase JS versions
+                    const { error: authDeleteError } = await supabaseClient.auth.deleteUser();
+
+                    if (authDeleteError) {
+                      throw authDeleteError;
+                    }
+
+                    alert('Your account has been deleted successfully.');
+                    window.location.href = '../auth/login.html';
+                  } else {
+                    // If direct deletion is not available, we can only sign out
+                    console.log('Direct deleteUser method not available, signing out user');
+                    await supabaseClient.auth.signOut();
+                    alert('Your account has been scheduled for deletion. Please contact support to complete the process.');
+                    window.location.href = '../auth/login.html';
+                  }
+                } catch (finalError) {
+                  console.error('Final deletion attempt failed:', finalError);
+                  throw new Error('Could not delete account. Please contact support.');
+                }
+              }
+            } catch (error) {
+              console.error('Account deletion error:', error);
+              alert('Error deleting account: ' + error.message);
+
+              // Reset button state
+              deleteAccountBtn.disabled = false;
+              deleteAccountBtn.innerHTML = 'Delete My Account';
+            }
+          }
+        });
+      }
+
+      // Profile form submission handling
+      const profileForm = document.getElementById('profileForm');
+      if (profileForm) {
+        profileForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+
+          // Show the spinner
+          const spinner = document.getElementById('saveSpinner');
+          if (spinner) spinner.style.display = 'inline-block';
+
+          // Disable buttons
+          const saveBtn = document.getElementById('saveProfileBtn');
+          const cancelBtn = document.getElementById('cancelProfileBtn');
+          if (saveBtn) saveBtn.disabled = true;
+          if (cancelBtn) cancelBtn.disabled = true;
+
+          try {
+            // Get the current user session
+            const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+            if (sessionError) throw new Error('Session error: ' + sessionError.message);
+
+            // First, get the profile ID
+            const { data: profiles, error: fetchError } = await supabaseClient
+              .from('profiles')
+              .select('id')
+              .eq('auth_id', session.user.id)
+              .order('created_at', { ascending: false }); // Get the most recent profile first
+
+            if (fetchError) {
+              console.error('Error fetching profile:', fetchError);
+              throw new Error('Failed to fetch profile');
+            }
+
+            if (!profiles || profiles.length === 0) {
+              throw new Error('Profile not found');
+            }
+
+            // Use the most recent profile
+            const profileId = profiles[0].id;
+            console.log('Using profile ID:', profileId);
+
+            // Get form data
+            const firstName = document.getElementById('first_name').value.trim();
+            const lastName = document.getElementById('last_name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            // Validate input (add more validation as needed)
+            if (!firstName) {
+              throw new Error('First name is required');
+            }
+
+            // Update profile in database
+            const { data: updatedProfile, error } = await supabaseClient
+              .from('profiles')
+              .update({
+                first_name: firstName,
+                last_name: lastName,
+                phone_number: phone,
+                updated_at: new Date()
+              })
+              .eq('id', profileId) // Use the specific profile ID
+              .select()
+              .single();
+
+            if (error) {
+              console.error('Error updating profile:', error);
+              throw new Error('Failed to update profile: ' + error.message);
+            }
+
+            console.log('Profile updated successfully:', updatedProfile);
+
+            // Show success message
+            const formAlert = document.getElementById('formAlert');
+            if (formAlert) {
+              formAlert.innerHTML = 'Profile updated successfully!';
+              formAlert.className = 'alert alert-success';
+              formAlert.style.display = 'block';
+              formAlert.style.backgroundColor = '#d1fae5';
+              formAlert.style.color = '#065f46';
+              formAlert.style.padding = '12px';
+              formAlert.style.borderRadius = '6px';
+              formAlert.style.marginBottom = '16px';
+              formAlert.style.border = '1px solid #10b981';
+
+              // Auto-hide alert after 3 seconds
+              setTimeout(() => {
+                formAlert.style.display = 'none';
+              }, 3000);
+            }
+          } catch (error) {
+            console.error('Profile update error:', error);
+
+            // Show error message
+            const formAlert = document.getElementById('formAlert');
+            if (formAlert) {
+              formAlert.innerHTML = error.message || 'Error updating profile';
+              formAlert.className = 'alert alert-error';
+              formAlert.style.display = 'block';
+              formAlert.style.backgroundColor = '#fee2e2';
+              formAlert.style.color = '#b91c1c';
+              formAlert.style.padding = '12px';
+              formAlert.style.borderRadius = '6px';
+              formAlert.style.marginBottom = '16px';
+              formAlert.style.border = '1px solid #ef4444';
+            }
+          } finally {
+            // Re-enable buttons and hide spinner
+            if (spinner) spinner.style.display = 'none';
+            if (saveBtn) saveBtn.disabled = false;
+            if (cancelBtn) cancelBtn.disabled = false;
+          }
+        });
+      }
+
+      // Logout functionality
+      document.getElementById('logoutButton')?.addEventListener('click', async function () {
+        if (confirm('Are you sure you want to log out?')) {
+          try {
+            // Sign out from Supabase
+            const { error } = await supabaseClient.auth.signOut();
+            if (error) {
+              console.error('Error signing out:', error);
+              throw error;
+            }
+
+            // Clear any local storage items
+            localStorage.removeItem('sb-kyathezublanpnjwansc-auth-token');
+
+            // Redirect to login page with correct relative path
+            window.location.href = '../auth/login.html';
+          } catch (error) {
+            console.error('Logout failed:', error);
+            alert('Logout failed. Please try again.');
+          }
+        }
+      });
+
+      // Initialize password strength meter for security tab
+      initPasswordStrengthMeter();
+
+      // Initialize export data functionality
+      const exportDataBtn = document.getElementById('exportDataBtn');
+      if (exportDataBtn) {
+        exportDataBtn.addEventListener('click', handleDataExport);
+      } else {
+        console.error('Export Data button not found!');
+      }
+    }
+
+    // Initialize password strength meter
+    function initPasswordStrengthMeter() {
+      const newPasswordInput = document.getElementById('newPassword');
+      const confirmPasswordInput = document.getElementById('confirmPassword');
+
+      if (newPasswordInput) {
+        newPasswordInput.addEventListener('input', function () {
+          updatePasswordStrength(this.value);
+        });
+      }
+
+      if (confirmPasswordInput && newPasswordInput) {
+        confirmPasswordInput.addEventListener('input', function () {
+          const passwordMatchText = document.getElementById('passwordMatch');
+          if (!passwordMatchText) return;
+
+          if (this.value === newPasswordInput.value) {
+            passwordMatchText.textContent = 'Passwords match';
+            passwordMatchText.className = 'text-sm text-green-500 mt-2';
+          } else {
+            passwordMatchText.textContent = 'Passwords do not match';
+            passwordMatchText.className = 'text-sm text-red-500 mt-2';
+          }
+        });
+      }
+
+      // Toggle password visibility
+      document.querySelectorAll('.password-toggle').forEach(button => {
+        button.addEventListener('click', function () {
+          const input = this.parentElement.querySelector('input');
+          if (input.type === 'password') {
+            input.type = 'text';
+            this.innerHTML = '<i class="fas fa-eye-slash text-gray-400"></i>';
+          } else {
+            input.type = 'password';
+            this.innerHTML = '<i class="fas fa-eye text-gray-400"></i>';
+          }
+        });
+      });
+    }
+
+    // Update password strength indicator
+    function updatePasswordStrength(password) {
+      if (!password) {
+        document.querySelectorAll('.strength-meter div').forEach(el => {
+          el.className = 'flex-1 rounded-full bg-gray-200';
+        });
+        document.getElementById('strengthText').textContent = 'Password strength';
+        return;
+      }
+
+      let score = 0;
+
+      // Length check
+      if (password.length >= 8) score += 1;
+      if (password.length >= 12) score += 1;
+
+      // Complexity checks
+      if (/[A-Z]/.test(password)) score += 1;  // Has uppercase
+      if (/[a-z]/.test(password)) score += 1;  // Has lowercase
+      if (/[0-9]/.test(password)) score += 1;  // Has number
+      if (/[^A-Za-z0-9]/.test(password)) score += 1;  // Has special char
+
+      const strength = Math.min(Math.floor(score / 1.5), 4);
+      const strengthColors = ['bg-gray-200', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
+      const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+
+      document.querySelectorAll('.strength-meter div').forEach((el, i) => {
+        el.className = 'flex-1 rounded-full';
+        el.classList.add(i < strength ? strengthColors[strength] : 'bg-gray-200');
+      });
+
+      document.getElementById('strengthText').textContent = strength > 0 ? strengthLabels[strength] : 'Password strength';
+    }
+
+    // Simplified alert function
+    function showAlert(message, type = 'info') {
+      const alertElement = document.getElementById('formAlert');
+      if (alertElement) {
+        alertElement.textContent = message;
+        alertElement.className = `alert alert-${type}`;
+        alertElement.style.display = 'block';
+
+        setTimeout(() => {
+          alertElement.style.display = 'none';
+        }, 5000);
+      } else {
+        alert(message);
+      }
+    }
+
+    // Handle data export functionality
+    async function handleDataExport() {
+      try {
+        console.log('Exporting user data...');
+        const button = document.getElementById('exportDataBtn');
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-3 text-xl"></i> Exporting...';
+
+        // Get the current user session
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+        if (sessionError) throw new Error('Session error: ' + sessionError.message);
+
+        // Load user profile data
+        const { data: profile, error: profileError } = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .eq('auth_id', session.user.id)
+          .single();
+
+        if (profileError) throw new Error('Profile error: ' + profileError.message);
+
+        // Create a data object with user information
+        const userData = {
+          userProfile: profile,
+          exportedAt: new Date().toISOString(),
+          email: session.user.email
+        };
+
+        // Convert to JSON string and create downloadable file
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userData, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `user_data_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+
+        showAlert('Your data has been exported successfully!', 'success');
+      } catch (error) {
+        console.error('Data export error:', error);
+        showAlert('Error exporting data: ' + error.message, 'error');
+      } finally {
+        // Reset button state
+        const button = document.getElementById('exportDataBtn');
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-download mr-3 text-xl"></i> Export My Data';
+      }
+    }
+  </script>
+
+</body>
+
+</html>

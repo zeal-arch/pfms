@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../../styles/globals.css" rel="stylesheet">
+    <title>Login - PFMS</title>
+    <style>
+        /* Custom override styles to fix scaling */
+        body {
+            font-size: 14px;
+        }
+
+        /* Typography adjustments */
+        .text-3xl {
+            font-size: 1.5rem !important;
+        }
+
+        .text-sm {
+            font-size: 0.8rem !important;
+        }
+
+        /* Container and spacing */
+        .max-w-lg {
+            max-width: 24rem;
+        }
+
+        .py-10 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 1rem;
+        }
+
+        .space-y-6>*+* {
+            margin-top: 0.75rem;
+        }
+
+        .h-12 {
+            height: 2.5rem;
+        }
+
+        .h-screen {
+            min-height: 100vh;
+            height: auto;
+        }
+
+        .grid-cols-2 {
+            column-gap: 0.75rem;
+        }
+
+        /* Ensure equal halves */
+        .md\:flex {
+            display: flex;
+            width: 100%;
+        }
+
+        .md\:w-1\/2 {
+            width: 50% !important;
+            flex: 0 0 50%;
+        }
+
+        /* Form elements */
+        input,
+        button {
+            font-size: 0.875rem !important;
+        }
+
+        .py-3\.5 {
+            padding-top: 0.6rem !important;
+            padding-bottom: 0.6rem !important;
+        }
+
+        .rounded-xl {
+            border-radius: 8px !important;
+        }
+
+        input.border {
+            height: 38px !important;
+            padding-top: 0.4rem !important;
+            padding-bottom: 0.4rem !important;
+        }
+
+        #loginForm {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* Left side content */
+        .text-5xl {
+            font-size: 2.25rem !important;
+        }
+
+        .text-xl {
+            font-size: 1.1rem !important;
+        }
+    </style>
+</head>
+
+<body class="h-screen">
+    <!-- Video Background -->
+    <div class="relative h-screen md:flex">
+        <!-- Left side with video -->
+        <div class="relative md:flex md:w-1/2 bg-gradient-to-tr from-red-800 to-red-600 justify-around items-center">
+            <!-- Video container -->
+            <div class="absolute inset-0 overflow-hidden">
+                <video class="video-background w-full h-full object-cover" autoplay muted loop>
+                    <source src="../../../../assets/Jeton-www jeton.mp4" type="video/mp4">
+                </video>
+            </div>
+            <!-- Content overlay -->
+            <div class="relative z-10 text-white px-10 text-center">
+                <h1 class="text-5xl font-bold mb-6 text-red-600">Welcome Back</h1>
+                <p class="text-xl text-red-600">Secure your financial future with PFMS</p>
+            </div>
+        </div>
+
+        <!-- Right side -->
+        <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
+            <div class="w-3/4 max-w-lg">
+                <!-- Logo -->
+                <div class="flex justify-center mb-8">
+                    <a href="../../../index/index.html">
+                        <img src="../../../../assets/symbol/Bitmap/Symbol-Primary.png" alt="Jeton" class="h-12">
+                    </a>
+                </div>
+
+                <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Welcome Back!</h2>
+                <p class="text-gray-600 text-center mb-8">Let's pick up where we left off</p>
+
+                <form id="loginForm" class="space-y-6">
+                    <!-- Add alert message div -->
+                    <div id="alertMessage" class="hidden mb-4 p-4 rounded-lg"></div>
+
+                    <!-- Email Input -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                        <div class="relative">
+                            <input type="email" id="email"
+                                class="w-full px-4 py-3.5 pl-12 border border-gray-300 rounded-xl "
+                                placeholder="name@gmail.com" required />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
+                                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z">
+                                    </path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" id="password"
+                                class="w-full px-4 py-3.5 pl-12 border border-gray-300 rounded-xl"
+                                placeholder="••••••••" required />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
+                                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <button type="button" id="togglePassword"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-600 transition duration-150 ease-in-out"
+                                title="Toggle password visibility" aria-label="Toggle password visibility">
+                                <svg id="showPassword" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="hidePassword" class="hidden h-5 w-5 text-gray-400" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember & Forgot -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember"
+                                class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded transition duration-150 ease-in-out" />
+                            <label for="remember" class="ml-2 block text-sm font-medium text-gray-700">Remember
+                                me</label>
+                        </div>
+                        <a href="./forgotPassword.html"
+                            class="text-sm font-medium text-red-600 hover:text-red-700 transition duration-150 ease-in-out">Forgot
+                            password?</a>
+                    </div>
+
+                    <!-- Sign In Button -->
+                    <button type="submit" id="submitButton"
+                        class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out transform hover:-translate-y-0.5">
+                        Sign In to Your Account
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-4 bg-white text-gray-500 text-sm">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <!-- Social Login -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <button type="button" onclick="signInWithGoogle()"
+                            class="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-150 ease-in-out transform hover:-translate-y-0.5">
+                            <svg class="h-5 w-5 mr-2" viewBox="0 0 24 24">
+                                <path
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                    fill="#4285F4" />
+                                <path
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                    fill="#34A853" />
+                                <path
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                    fill="#FBBC05" />
+                                <path
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                    fill="#EA4335" />
+                            </svg>
+                            Google
+                        </button>
+                        <button type="button"
+                            class="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-150 ease-in-out transform hover:-translate-y-0.5">
+                            <svg class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
+                            </svg>
+                            Apple
+                        </button>
+                    </div>
+
+                    <!-- Sign Up Link -->
+                    <p class="mt-8 text-center text-sm text-gray-600">
+                        Don't have an account?
+                        <a href="./signup.html"
+                            class="font-semibold text-red-600 hover:text-red-700 transition duration-150 ease-in-out">Create
+                            an account</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Include Supabase from CDN - fixed with specific version and proper URL -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
+
+    <!-- Custom login script -->
+    <script>
+        // Initialize Supabase with version 2
+        const supabaseUrl = 'https://kyathezublanpnjwansc.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5YXRoZXp1YmxhbnBuandhbnNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5NTI0NjEsImV4cCI6MjA1NzUyODQ2MX0.gCdHDGP9RKk5sRABNh29oww2n74j1GUXlNctya11a7w';
+
+        // Create the client - in v2, window.supabase is provided by the CDN
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const submitButton = document.getElementById('submitButton');
+
+            if (!loginForm) {
+                console.error('Login form not found');
+                return;
+            }
+
+            // Check if user is already logged in
+            checkAuth();
+
+            // Handle form submission
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                try {
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = 'Signing in...';
+
+                    const email = document.getElementById('email').value.trim().toLowerCase();
+                    const password = document.getElementById('password').value;
+
+                    if (!email || !password) {
+                        throw new Error('Please enter both email and password');
+                    }
+
+                    // Use Supabase authentication
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password,
+                    });
+
+                    if (error) {
+                        console.error('Supabase signIn error:', error);
+
+                        // Check if the error is about email confirmation
+                        if (error.message && error.message.includes('Email not confirmed')) {
+                            showAlert('Please check your email and confirm your account before logging in.', 'error');
+                        } else {
+                            throw new Error(error.message || 'Login failed');
+                        }
+                    } else {
+                        console.log('Login successful');
+                        showAlert('Login successful! Redirecting...', 'success');
+
+                        // Store user data and session in localStorage
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        localStorage.setItem('sb-session', JSON.stringify(data.session));
+
+                        // Redirect to dashboard
+                        setTimeout(() => {
+                            window.location.href = '../Dashboard/dashboard.html';
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showAlert(error.message || 'Network error. Please try again.', 'error');
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'Sign In to Your Account';
+                }
+            });
+
+            // Toggle password visibility
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function () {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+
+                    const showPasswordIcon = document.getElementById('showPassword');
+                    const hidePasswordIcon = document.getElementById('hidePassword');
+
+                    if (showPasswordIcon && hidePasswordIcon) {
+                        showPasswordIcon.classList.toggle('hidden');
+                        hidePasswordIcon.classList.toggle('hidden');
+                    }
+                });
+            }
+        });
+
+        // Helper functions
+        function showAlert(message, type = 'error') {
+            const alertDiv = document.getElementById('alertMessage');
+            if (!alertDiv) {
+                console.error('Alert message element not found');
+                return;
+            }
+
+            alertDiv.textContent = message;
+            alertDiv.className = `p-4 rounded-lg mb-4 ${type === 'success'
+                ? 'bg-green-100 text-green-700'
+                : 'bg-red-100 text-red-700'
+                }`;
+            alertDiv.classList.remove('hidden');
+
+            setTimeout(() => {
+                alertDiv.classList.add('hidden');
+            }, 3000);
+        }
+
+        async function checkAuth() {
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+                if (error) {
+                    console.error('Error checking auth session:', error);
+                    return;
+                }
+
+                if (session) {
+                    window.location.href = '../Dashboard/dashboard.html';
+                }
+            } catch (error) {
+                console.error('Exception during auth check:', error);
+            }
+        }
+
+        // Function stub for Google sign-in
+        function signInWithGoogle() {
+            console.log('Google sign-in initiated');
+            // Implement proper Google sign-in with Supabase
+            supabaseClient.auth.signInWithOAuth({
+                provider: 'google'
+            });
+        }
+    </script>
+</body>
+
+</html>
